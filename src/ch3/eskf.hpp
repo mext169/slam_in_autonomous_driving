@@ -228,9 +228,9 @@ bool ESKF<S>::Predict(const IMU& imu) {
     }
 
     // nominal state 递推
-    VecT new_p = p_ + v_ * dt + 0.5 * (R_ * (imu.acce_ - ba_)) * dt * dt + 0.5 * g_ * dt * dt;
-    VecT new_v = v_ + R_ * (imu.acce_ - ba_) * dt + g_ * dt;
-    SO3 new_R = R_ * SO3::exp((imu.gyro_ - bg_) * dt);
+    VecT new_p = p_ + v_ * dt + 0.5 * (R_ * (imu.acce_ - ba_)) * dt * dt + 0.5 * g_ * dt * dt; // 3.41a
+    VecT new_v = v_ + R_ * (imu.acce_ - ba_) * dt + g_ * dt; // 3.41b
+    SO3 new_R = R_ * SO3::exp((imu.gyro_ - bg_) * dt); // 3.41c
 
     R_ = new_R;
     v_ = new_v;
@@ -317,7 +317,7 @@ bool ESKF<S>::ObserveSE3(const SE3& pose, double trans_noise, double ang_noise) 
     noise_vec << trans_noise, trans_noise, trans_noise, ang_noise, ang_noise, ang_noise;
 
     Mat6d V = noise_vec.asDiagonal();
-    Eigen::Matrix<S, 18, 6> K = cov_ * H.transpose() * (H * cov_ * H.transpose() + V).inverse();
+    Eigen::Matrix<S, 18, 6> K = cov_ * H.transpose() * (H * cov_ * H.transpose() + V).inverse(); // 3.51a
 
     // 更新x和cov
     Vec6d innov = Vec6d::Zero();

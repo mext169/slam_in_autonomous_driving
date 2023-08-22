@@ -108,6 +108,7 @@ int main(int argc, char** argv) {
       })
         .SetGNSSProcessFunc([&](const sad::GNSS& gnss) {
             /// GNSS 处理函数
+            // 从这里对比可以看出 IMU需要先于GNSS初始化完成
             if (!imu_inited) {
                 return;
             }
